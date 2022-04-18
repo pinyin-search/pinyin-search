@@ -3,6 +3,7 @@
 *.a
 *.so
 __*
+pinyin-suggestion
 
 # Folders
 _obj
@@ -25,7 +26,6 @@ _testmain.go
 *.prof
 profile.cov
 coverage.html
-/go.sum
 
 # Emacs backup files
 *~

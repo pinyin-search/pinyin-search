@@ -3,19 +3,41 @@ package main
 import (
 	"flag"
 	"log"
+	"net"
 	"net/http"
 	"os"
+	"pinyin-suggestion/search"
 	"pinyin-suggestion/web"
 	"time"
 )
 
 // 监听地址
-var listen = flag.String("l", ":9876", "监听地址")
+var listen = flag.String("l", ":7701", "监听地址")
+var authorization = flag.String("auth", "", "认证, 留空不进行认证")
+var meiliHost = flag.String("meiliHost", "127.0.0.1:7700", "meilisearch Host")
+var meiliAPIKey = flag.String("meiliAPIKey", "", "meilisearch APIKey")
 
 func main() {
+	flag.Parse()
+	if _, err := net.ResolveTCPAddr("tcp", *listen); err != nil {
+		log.Fatalf("解析监听地址异常，%s", err)
+	}
+
+	os.Setenv(web.AUTHORIZATION_ENV, *authorization)
+	os.Setenv(search.MEILISEARCH_HOST_ENV, *meiliHost)
+	os.Setenv(search.MEILISEARCH_APIKEY_ENV, *meiliAPIKey)
+
+	// init search
+	if *meiliHost != "" {
+		search.MySearch = &search.MeiliSearch{}
+		search.MySearch.Init()
+	}
+
+	http.HandleFunc("/add", web.Auth(web.Add))
+	http.HandleFunc("/suggestion", web.Auth(web.Suggestion))
+
 	log.Println("监听", *listen, "...")
 
-	http.HandleFunc("/insert", web.Insert)
 	err := http.ListenAndServe(*listen, nil)
 
 	if err != nil {
