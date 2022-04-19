@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"pinyin-search/entity"
+	"sync"
 
 	"github.com/meilisearch/meilisearch-go"
 )
@@ -12,7 +13,8 @@ const MEILISEARCH_HOST_ENV = "MEILISEARCH_HOST"
 const MEILISEARCH_APIKEY_ENV = "MEILISEARCH_APIKEY"
 
 type MeiliSearch struct {
-	Client *meilisearch.Client
+	Client      *meilisearch.Client
+	DistinctMap sync.Map
 }
 
 func (meili *MeiliSearch) Init() {
@@ -25,6 +27,11 @@ func (meili *MeiliSearch) Init() {
 func (meili *MeiliSearch) Add(tenant string, indexName string, doc []map[string]interface{}) entity.Result {
 	// An index is where the documents are stored.
 	index := meili.Client.Index(tenant + "_" + indexName)
+
+	// 结果去重
+	if _, ok := meili.DistinctMap.LoadOrStore(tenant+"_"+indexName, true); !ok {
+		index.UpdateDistinctAttribute("value")
+	}
 
 	task, err := index.AddDocuments(doc)
 	if err != nil {
