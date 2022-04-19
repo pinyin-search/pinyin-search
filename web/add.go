@@ -30,8 +30,14 @@ func Add(writer http.ResponseWriter, request *http.Request) {
 	words := jieba.Cut(data, true)
 	indexes := make(map[string]string)
 
-	// 全部
+	// 全拼字母
 	indexes[strings.Join(pinyin.LazyPinyin(data, pyArgs), "")] = data
+
+	// 全拼第一个字母
+	firstLetterAll := strings.Join(pinyin.LazyPinyin(data, pyArgsFirst), "")
+	if firstLetterAll != "" {
+		indexes[firstLetterAll] = data
+	}
 
 	// 分词
 	for _, word := range words {
@@ -41,6 +47,7 @@ func Add(writer http.ResponseWriter, request *http.Request) {
 			if firstLetter != "" {
 				indexes[firstLetter] = word
 			}
+
 			// 拼音
 			pyAll := ""
 			for _, py := range pinyin.LazyPinyin(word, pyArgs) {

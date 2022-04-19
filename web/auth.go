@@ -25,6 +25,5 @@ func Auth(f ViewFunc) ViewFunc {
 		}
 		// 执行被装饰的函数
 		f(w, r)
-		return
 	}
 }
