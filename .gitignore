@@ -3,7 +3,7 @@
 *.a
 *.so
 __*
-pinyin-suggestion
+pinyin-search
 
 # Folders
 _obj

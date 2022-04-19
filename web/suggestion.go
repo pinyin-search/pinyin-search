@@ -3,7 +3,7 @@ package web
 import (
 	"encoding/json"
 	"net/http"
-	"pinyin-suggestion/search"
+	"pinyin-search/search"
 )
 
 // Suggestion Suggestion

@@ -6,8 +6,8 @@ import (
 	"net"
 	"net/http"
 	"os"
-	"pinyin-suggestion/search"
-	"pinyin-suggestion/web"
+	"pinyin-search/search"
+	"pinyin-search/web"
 	"time"
 )
 
@@ -15,7 +15,7 @@ import (
 var listen = flag.String("l", ":7701", "监听地址")
 var authorization = flag.String("auth", "", "认证, 留空不进行认证")
 var meiliHost = flag.String("meiliHost", "127.0.0.1:7700", "meilisearch Host")
-var meiliAPIKey = flag.String("meiliAPIKey", "", "meilisearch APIKey")
+var meiliKey = flag.String("meiliKey", "", "meilisearch APIKey")
 
 func main() {
 	flag.Parse()
@@ -25,7 +25,7 @@ func main() {
 
 	os.Setenv(web.AUTHORIZATION_ENV, *authorization)
 	os.Setenv(search.MEILISEARCH_HOST_ENV, *meiliHost)
-	os.Setenv(search.MEILISEARCH_APIKEY_ENV, *meiliAPIKey)
+	os.Setenv(search.MEILISEARCH_APIKEY_ENV, *meiliKey)
 
 	// init search
 	if *meiliHost != "" {

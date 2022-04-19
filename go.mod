@@ -1,4 +1,4 @@
-module pinyin-suggestion
+module pinyin-search
 
 go 1.17
 

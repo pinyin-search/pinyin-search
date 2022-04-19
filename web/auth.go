@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"os"
-	"pinyin-suggestion/entity"
+	"pinyin-search/entity"
 )
 
 // ViewFunc func

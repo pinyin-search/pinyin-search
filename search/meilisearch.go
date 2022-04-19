@@ -3,7 +3,7 @@ package search
 import (
 	"log"
 	"os"
-	"pinyin-suggestion/entity"
+	"pinyin-search/entity"
 
 	"github.com/meilisearch/meilisearch-go"
 )

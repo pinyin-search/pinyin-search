@@ -1,6 +1,6 @@
 package search
 
-import "pinyin-suggestion/entity"
+import "pinyin-search/entity"
 
 var MySearch Search
 

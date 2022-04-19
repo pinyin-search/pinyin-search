@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"hash/crc32"
 	"net/http"
-	"pinyin-suggestion/search"
+	"pinyin-search/search"
 	"regexp"
 	"strings"
 	"unicode/utf8"

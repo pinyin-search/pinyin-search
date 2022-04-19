@@ -1,7 +1,7 @@
 .PHONY: build clean test test-race
 
 VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1`)
-BIN=pinyin-suggestion
+BIN=pinyin-search
 DIR_SRC=.
 DOCKER_CMD=docker
 
@@ -15,7 +15,7 @@ build: $(DIR_SRC)/main.go
 	@$(GO) build $(GO_FLAGS) -o $(BIN) $(DIR_SRC)
 
 build_docker_image:
-	@$(DOCKER_CMD) build -f ./Dockerfile -t pinyin-suggestion:$(VERSION) .
+	@$(DOCKER_CMD) build -f ./Dockerfile -t $(BIN):$(VERSION) .
 
 test:
 	@$(GO) test ./...
