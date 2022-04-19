@@ -9,18 +9,21 @@ import (
 	"strings"
 	"unicode/utf8"
 
+	"github.com/go-ego/gse"
+
 	"github.com/mozillazg/go-pinyin"
-	"github.com/yanyiwu/gojieba"
 )
 
 var pyArgs = pinyin.NewArgs()
 var pyArgsFirst = pinyin.NewArgs()
-var jieba = gojieba.NewJieba()
+var seg gse.Segmenter
 
 var regWord, _ = regexp.Compile("[a-zA-Z]")
 
 func init() {
 	pyArgsFirst.Style = pinyin.FirstLetter
+	// 加载默认字典
+	seg.LoadDict()
 }
 
 // Add add
@@ -30,7 +33,7 @@ func Add(writer http.ResponseWriter, request *http.Request) {
 	indexName := request.Form.Get("indexName")
 	data := request.Form.Get("data")
 
-	words := jieba.Cut(data, true)
+	words := seg.Cut(data, true)
 	indexes := make(map[string]string)
 
 	// 全拼字母
