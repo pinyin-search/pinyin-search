@@ -15,5 +15,5 @@ http://localhost:7701/add?data=今天天气真好啊&indexName=test
 ## 搜索建议接口
 
 ```
-http://localhost:7701/suggestion?data=tq&indexName=test
+http://localhost:7701/suggestion?data=jttq&indexName=test
 ```

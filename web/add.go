@@ -42,10 +42,15 @@ func Add(writer http.ResponseWriter, request *http.Request) {
 				indexes[firstLetter] = word
 			}
 			// 拼音
-			for _, w := range pinyin.LazyPinyin(word, pyArgs) {
-				if w != "" {
-					indexes[w] = word
+			pyAll := ""
+			for _, py := range pinyin.LazyPinyin(word, pyArgs) {
+				if py != "" {
+					indexes[py] = word
+					pyAll = pyAll + py
 				}
+			}
+			if pyAll != "" {
+				indexes[pyAll] = word
 			}
 		}
 	}
@@ -58,7 +63,9 @@ func Add(writer http.ResponseWriter, request *http.Request) {
 		}
 	}
 	wordsEnglish = strings.TrimSpace(wordsEnglish)
-	indexes[wordsEnglish] = wordsEnglish
+	if wordsEnglish != "" {
+		indexes[wordsEnglish] = wordsEnglish
+	}
 
 	var doc []map[string]interface{}
 	for k, v := range indexes {
