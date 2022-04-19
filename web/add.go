@@ -25,8 +25,11 @@ func init() {
 
 // Add add
 func Add(writer http.ResponseWriter, request *http.Request) {
-	indexName := request.FormValue("indexName")
-	data := request.FormValue("data")
+	request.ParseForm()
+	tenant := request.Form.Get("tenant")
+	indexName := request.Form.Get("indexName")
+	data := request.Form.Get("data")
+
 	words := jieba.Cut(data, true)
 	indexes := make(map[string]string)
 
@@ -79,6 +82,6 @@ func Add(writer http.ResponseWriter, request *http.Request) {
 		doc = append(doc, map[string]interface{}{"id": int(crc32.ChecksumIEEE([]byte(k + v))), "key": k, "value": v})
 	}
 
-	returnJson, _ := json.Marshal(search.MySearch.Add("test", indexName, doc))
+	returnJson, _ := json.Marshal(search.MySearch.Add(tenant, indexName, doc))
 	writer.Write(returnJson)
 }
