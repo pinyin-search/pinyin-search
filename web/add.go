@@ -82,9 +82,14 @@ func Add(writer http.ResponseWriter, request *http.Request) {
 
 	var doc []map[string]interface{}
 	for k, v := range indexes {
-		doc = append(doc, map[string]interface{}{"id": int(crc32.ChecksumIEEE([]byte(k + v))), "key": k, "value": v})
+		doc = append(doc, map[string]interface{}{"id": int64(crc32.ChecksumIEEE([]byte(k + v))), "key": k, "value": v})
 	}
 
-	returnJson, _ := json.Marshal(search.MySearch.Add(tenant, indexName, doc))
+	result, err := search.MySearch.Add(tenant, indexName, doc)
+	if err != nil {
+		writer.WriteHeader(400)
+	}
+	returnJson, _ := json.Marshal(result)
 	writer.Write(returnJson)
+
 }

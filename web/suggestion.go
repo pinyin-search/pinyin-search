@@ -13,6 +13,10 @@ func Suggestion(writer http.ResponseWriter, request *http.Request) {
 	indexName := request.Form.Get("indexName")
 	data := request.Form.Get("data")
 
-	returnJson, _ := json.Marshal(search.MySearch.Suggestion(tenant, indexName, data))
+	result, err := search.MySearch.Suggestion(tenant, indexName, data)
+	if err != nil {
+		writer.WriteHeader(400)
+	}
+	returnJson, _ := json.Marshal(result)
 	writer.Write(returnJson)
 }
