@@ -3,9 +3,9 @@ module pinyin-search
 go 1.17
 
 require (
+	github.com/go-ego/gse v0.70.0
 	github.com/meilisearch/meilisearch-go v0.19.0
 	github.com/mozillazg/go-pinyin v0.19.0
-	github.com/go-ego/gse v0.70.0
 )
 
 require (
@@ -17,5 +17,5 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.35.0 // indirect
-	github.com/vcaesar/cedar v0.20.0 // indirect
+	github.com/vcaesar/cedar v0.20.1 // indirect
 )

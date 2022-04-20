@@ -2,6 +2,7 @@ package web
 
 import (
 	"encoding/json"
+	"fmt"
 	"hash/crc32"
 	"net/http"
 	"pinyin-search/search"
@@ -26,11 +27,12 @@ func init() {
 	seg.LoadDict()
 }
 
-// Add add
-func Add(writer http.ResponseWriter, request *http.Request) {
+// AddUpdate 新增或更新索引
+func AddUpdate(writer http.ResponseWriter, request *http.Request) {
 	request.ParseForm()
 	tenant := request.Form.Get("tenant")
 	indexName := request.Form.Get("indexName")
+	guid := request.Form.Get("guid")
 	data := request.Form.Get("data")
 
 	words := seg.Cut(data, true)
@@ -82,10 +84,10 @@ func Add(writer http.ResponseWriter, request *http.Request) {
 
 	var doc []map[string]interface{}
 	for k, v := range indexes {
-		doc = append(doc, map[string]interface{}{"id": int64(crc32.ChecksumIEEE([]byte(k + v))), "key": k, "value": v})
+		doc = append(doc, map[string]interface{}{"id": fmt.Sprintf("%d", crc32.ChecksumIEEE([]byte(k+v))), "guid": guid, "key": k, "value": v})
 	}
 
-	result, err := search.MySearch.Add(tenant, indexName, doc)
+	result, err := search.MySearch.AddUpdate(tenant, indexName, guid, doc)
 	if err != nil {
 		writer.WriteHeader(400)
 	}

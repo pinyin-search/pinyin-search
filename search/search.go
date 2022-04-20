@@ -6,7 +6,8 @@ var MySearch Search
 
 type Search interface {
 	Init()
-	// tenant 租户 indexName 索引名 doc 文档
-	Add(tenant string, indexName string, doc []map[string]interface{}) (entity.Result, error)
+	// Add/Update 通过guid更新索引
+	AddUpdate(tenant string, indexName string, guid string, doc []map[string]interface{}) (entity.Result, error)
+	Delete(tenant string, indexName string, guid string) (entity.Result, error)
 	Suggestion(tenant string, indexName string, keyword string) (entity.Result, error)
 }

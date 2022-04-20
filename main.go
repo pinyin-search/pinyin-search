@@ -33,7 +33,7 @@ func main() {
 		search.MySearch.Init()
 	}
 
-	http.HandleFunc("/add", web.Auth(web.Add))
+	http.HandleFunc("/addUpdate", web.Auth(web.AddUpdate))
 	http.HandleFunc("/suggestion", web.Auth(web.Suggestion))
 
 	log.Println("监听", *listen, "...")
