@@ -3,6 +3,21 @@
 
 提供一些接口, 支持一段中英文进行分词, 分词后的数据转换为拼音, 并保存到search中, 目前只实现了meilisearch.
 
+
+## 安装
+```
+docker run -d \
+  --name pinyin-search \
+  --restart=always -p 7701:7701 \
+  jeessy/pinyin-search \
+  -meiliHost https://meiliHost.com -meiliKey xxxx \
+  -auth xxxx
+```
+
+## 支持接口验证
+
+http接口中的header中需要传`Authorization`, 参数为安装时指定的auth
+
 ## 添加/更新数据接口(通过guid可删除以前的索引)
 
 ```
