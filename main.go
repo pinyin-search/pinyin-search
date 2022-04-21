@@ -34,6 +34,7 @@ func main() {
 	}
 
 	http.HandleFunc("/addUpdate", web.Auth(web.AddUpdate))
+	http.HandleFunc("/delete", web.Auth(web.Delete))
 	http.HandleFunc("/suggestion", web.Auth(web.Suggestion))
 
 	log.Println("监听", *listen, "...")

@@ -94,11 +94,12 @@ func (meili *MeiliSearch) Delete(indexName string, dataId string) (entity.Result
 		index.DeleteDocuments(deleteIds)
 
 		log.Printf("删除Index成功。indexName: %s, dataId: %s, 索引条数: %d\n", indexName, dataId, len(deleteIds))
+		return entity.Result{Success: true, Msg: fmt.Sprintf("删除 %d 条索引", len(deleteIds))}, nil
 	} else if err, ok := err.(*meilisearch.Error); ok && err.StatusCode != 404 {
 		log.Printf("删除索引失败。indexName: %s, Err: %s\n", indexName, err)
+		return entity.Result{Success: false, Msg: err.Error(), Data: nil}, err
 	}
-
-	return entity.Result{Success: true, Data: nil}, nil
+	return entity.Result{Success: true}, nil
 }
 
 // Suggestion 搜索建议
