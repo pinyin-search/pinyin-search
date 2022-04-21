@@ -13,7 +13,7 @@ func Suggestion(writer http.ResponseWriter, request *http.Request) {
 	indexName := request.Form.Get("indexName")
 	data := request.Form.Get("data")
 
-	result, err := search.MySearch.Suggestion(tenant, indexName, data)
+	result, err := search.MySearch.Suggestion(tenant+"_"+indexName, data)
 	if err != nil {
 		writer.WriteHeader(400)
 	}

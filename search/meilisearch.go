@@ -1,6 +1,7 @@
 package search
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"pinyin-search/entity"
@@ -25,27 +26,23 @@ func (meili *MeiliSearch) Init() {
 }
 
 // add 添加索引
-func (meili *MeiliSearch) add(tenant string, indexName string, doc []map[string]interface{}) (entity.Result, error) {
+func (meili *MeiliSearch) add(indexName string, doc []map[string]interface{}) (entity.Result, error) {
 	// An index is where the documents are stored.
-	index := meili.Client.Index(tenant + "_" + indexName)
+	index := meili.Client.Index(indexName)
 
 	// 初始化参数
-	if _, ok := meili.DistinctMap.LoadOrStore(tenant+"_"+indexName, true); !ok {
+	if _, ok := meili.DistinctMap.LoadOrStore(indexName, true); !ok {
 		// 主索引为id
-		_, err := meili.Client.GetIndex(tenant + "_" + indexName)
+		_, err := meili.Client.GetIndex(indexName)
 		if err, ok := err.(*meilisearch.Error); ok {
 			if err.StatusCode == 404 {
 				meili.Client.CreateIndex(&meilisearch.IndexConfig{
-					Uid:        tenant + "_" + indexName,
+					Uid:        indexName,
 					PrimaryKey: "id",
 				})
 			}
 		}
 
-		// guid 可搜索
-		index.UpdateFilterableAttributes(&[]string{
-			"guid",
-		})
 		// 结果去重
 		index.UpdateDistinctAttribute("value")
 
@@ -53,79 +50,63 @@ func (meili *MeiliSearch) add(tenant string, indexName string, doc []map[string]
 
 	task, err := index.AddDocuments(doc)
 	if err != nil {
-		log.Printf("添加Index失败。tenant: %s, indexName: %s, err: %s\n", tenant, indexName, err)
+		log.Printf("添加Index失败。indexName: %s, err: %s\n", indexName, err)
 		return entity.Result{Success: false, Msg: err.Error()}, err
 	}
 
 	task, err = meili.Client.GetTask(task.UID)
 	if err != nil {
-		log.Printf("添加Index失败。tenant: %s, indexName: %s, err: %s\n", tenant, indexName, err)
+		log.Printf("添加Index失败。indexName: %s, err: %s\n", indexName, err)
 		return entity.Result{Success: false, Msg: err.Error()}, err
 	}
+	log.Printf("添加Index成功。indexName: %s\n", indexName)
 
 	return entity.Result{Success: true, Data: doc, Msg: string(task.Status)}, nil
 }
 
 // Update 更新索引
-func (meili *MeiliSearch) AddUpdate(tenant string, indexName string, guid string, doc []map[string]interface{}) (entity.Result, error) {
+func (meili *MeiliSearch) AddUpdate(indexName string, dataId string, doc []map[string]interface{}) (entity.Result, error) {
 
 	// 通过guid删除旧数据
-	meili.Delete(tenant, indexName, guid)
+	meili.Delete(indexName, dataId)
 
-	return meili.add(tenant, indexName, doc)
+	return meili.add(indexName, doc)
 }
 
 // Delete 删除索引
-func (meili *MeiliSearch) Delete(tenant string, indexName string, guid string) (entity.Result, error) {
+func (meili *MeiliSearch) Delete(indexName string, dataId string) (entity.Result, error) {
 
-	index := meili.Client.Index(tenant + "_" + indexName)
+	index := meili.Client.Index(indexName)
 
-	// ResetDistinctAttribute
-	t, err := index.ResetDistinctAttribute()
-	if err == nil {
-		meili.Client.GetTask(t.UID)
-	}
-
-	// 通过guid查找旧数据
-	resp, err := index.Search("", &meilisearch.SearchRequest{
-		Filter: [][]string{
-			{"guid = '" + guid + "'"},
-		},
-		Limit: 1000,
+	// 通过dataId查找旧数据
+	resp, err := index.Search(dataId, &meilisearch.SearchRequest{
+		AttributesToRetrieve: []string{"id"},
+		Limit:                1,
 	})
 
 	// 删除旧的索引
 	if err == nil {
-		deleteIds := make([]string, len(resp.Hits))
-		for i, hit := range resp.Hits {
-			if hitNew, ok := hit.(map[string]interface{}); ok {
-				if id, ok := hitNew["id"].(string); ok {
-					deleteIds[i] = id
-				}
-			}
+		deleteIds := make([]string, resp.NbHits)
+		var i int64
+		for i = 0; i < resp.NbHits; i++ {
+			deleteIds[i] = fmt.Sprintf("%s_%d", dataId, i)
 		}
 		index.DeleteDocuments(deleteIds)
 
-		log.Printf("删除 %d 个索引 %s\n", len(deleteIds), resp.Hits)
-	} else {
-		log.Printf("删除索引失败. Err: %s\n", err)
+		log.Printf("删除Index成功。indexName: %s, dataId: %s, 索引条数: %d\n", indexName, dataId, len(deleteIds))
+	} else if err, ok := err.(*meilisearch.Error); ok && err.StatusCode != 404 {
+		log.Printf("删除索引失败。indexName: %s, Err: %s\n", indexName, err)
 	}
 
 	return entity.Result{Success: true, Data: nil}, nil
 }
 
 // Suggestion 搜索建议
-func (meili *MeiliSearch) Suggestion(tenant string, indexName string, keyword string) (entity.Result, error) {
-	index := meili.Client.Index(tenant + "_" + indexName)
-	task, err := index.UpdateDistinctAttribute("value")
-	if err == nil {
-		meili.Client.GetTask(task.UID)
-	}
-
-	searchRes, err := index.Search(keyword, &meilisearch.SearchRequest{})
+func (meili *MeiliSearch) Suggestion(indexName string, keyword string) (entity.Result, error) {
+	searchRes, err := meili.Client.Index(indexName).Search(keyword, &meilisearch.SearchRequest{})
 
 	if err != nil {
-		log.Printf("搜索失败。tenant: %s, indexName: %s, err: %s", tenant, indexName, err)
+		log.Printf("搜索失败。indexName: %s, Err: %s", indexName, err)
 		return entity.Result{Success: false, Msg: err.Error()}, err
 	}
 

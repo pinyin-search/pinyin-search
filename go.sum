@@ -30,7 +30,6 @@ github.com/valyala/fasthttp v1.34.0/go.mod h1:epZA5N+7pY6ZaEKRmstzOuYJx9HI8DI1oa
 github.com/valyala/fasthttp v1.35.0 h1:wwkR8mZn2NbigFsaw2Zj5r+xkmzjbrA/lyTmiSlal/Y=
 github.com/valyala/fasthttp v1.35.0/go.mod h1:t/G+3rLek+CyY9bnIE+YlMRddxVAAGjhxndDB4i4C0I=
 github.com/valyala/tcplisten v1.0.0/go.mod h1:T0xQ8SeCZGxckz9qRXTfG43PvQ/mcWh7FwZEA7Ioqkc=
-github.com/vcaesar/cedar v0.20.0 h1:VtBy/twzVjXiTo1Ij3fQRyDQRzvzDa9sKacpbwSJyps=
 github.com/vcaesar/cedar v0.20.0/go.mod h1:iMDweyuW76RvSrCkQeZeQk4iCbshiPzcCvcGCtpM7iI=
 github.com/vcaesar/cedar v0.20.1 h1:cDOmYWdprO7ZW8cngJrDi8Zivnscj9dA/y8Y+2SB1P0=
 github.com/vcaesar/cedar v0.20.1/go.mod h1:iMDweyuW76RvSrCkQeZeQk4iCbshiPzcCvcGCtpM7iI=

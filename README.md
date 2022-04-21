@@ -18,20 +18,20 @@ docker run -d \
 
 http接口中的header中需要传`Authorization`, 参数为安装时指定的auth
 
-## 添加/更新数据接口(通过guid可删除以前的索引)
+## 添加/更新数据接口(更新通过dataId删除之前的索引)
 
 ```
-http://localhost:7701/addUpdate?tenant=test&indexName=test&guid=123456789&data=今天天气真好啊
+http://localhost:7701/addUpdate?tenant=projectName&indexName=test&dataId=123456789&data=今天天气真好啊
 ```
 
-## 删除接口
+## 删除接口 (通过dataId可删除索引)
 
 ```
-http://localhost:7701/delete?tenant=test&indexName=test&guid=123456789
+http://localhost:7701/delete?tenant=projectName&indexName=test&dataId=123456789
 ```
 
 ## 搜索建议接口
 
 ```
-http://localhost:7701/suggestion?data=jttq&indexName=test
+http://localhost:7701/suggestion?tenant=projectName&indexName=test&data=jttq
 ```
