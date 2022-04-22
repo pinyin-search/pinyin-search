@@ -13,6 +13,13 @@ func Delete(writer http.ResponseWriter, request *http.Request) {
 	indexName := request.Form.Get("indexName")
 	dataId := request.Form.Get("dataId")
 
+	if dataId == "" || indexName == "" {
+		writer.WriteHeader(400)
+		j, _ := json.Marshal(errDataJson)
+		writer.Write(j)
+		return
+	}
+
 	result, err := search.MySearch.Delete(tenant+"_"+indexName, dataId)
 	if err != nil {
 		writer.WriteHeader(400)

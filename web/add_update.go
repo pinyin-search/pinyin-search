@@ -18,6 +18,7 @@ import (
 var pyArgs = pinyin.NewArgs()
 var pyArgsFirst = pinyin.NewArgs()
 var seg gse.Segmenter
+var errDataJson entity.Result = entity.Result{Success: false, Msg: "异常的数据, 将不会添加索引"}
 
 var regWord, _ = regexp.Compile("[a-zA-Z]")
 
@@ -35,10 +36,10 @@ func AddUpdate(writer http.ResponseWriter, request *http.Request) {
 	dataId := request.Form.Get("dataId")
 	data := request.Form.Get("data")
 
-	if  data == "" || dataId == "" || indexName == "" {
-		returnJson, _ := json.Marshal(entity.Result{Success: false, Msg: "错误的数据"})
+	if data == "" || dataId == "" || indexName == "" {
 		writer.WriteHeader(400)
-		writer.Write(returnJson)
+		j, _ := json.Marshal(errDataJson)
+		writer.Write(j)
 		return
 	}
 
