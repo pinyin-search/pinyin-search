@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"pinyin-search/entity"
 	"pinyin-search/search"
 	"regexp"
 	"strings"
@@ -33,6 +34,13 @@ func AddUpdate(writer http.ResponseWriter, request *http.Request) {
 	indexName := request.Form.Get("indexName")
 	dataId := request.Form.Get("dataId")
 	data := request.Form.Get("data")
+
+	if  data == "" || dataId == "" || indexName == "" {
+		returnJson, _ := json.Marshal(entity.Result{Success: false, Msg: "错误的数据"})
+		writer.WriteHeader(400)
+		writer.Write(returnJson)
+		return
+	}
 
 	words := seg.Cut(data, true)
 	indexes := make(map[string]string)
