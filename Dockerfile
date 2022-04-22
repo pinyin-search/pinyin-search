@@ -10,7 +10,7 @@ RUN go env -w GO111MODULE=on \
 # final stage
 FROM alpine
 LABEL name=pinyin-search
-LABEL url=https://github.com/jeessy2/pinyin-search
+LABEL url=https://github.com/pinyin-search/pinyin-search
 
 WORKDIR /app
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories \

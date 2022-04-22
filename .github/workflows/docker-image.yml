@@ -12,7 +12,7 @@ jobs:
   buildx-dockerhub:
     runs-on: ubuntu-latest
     env:
-      DOCKER_REPO: jeessy/pinyin-search
+      DOCKER_REPO: pinyinsearch/pinyin-search
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       DOCKER_PLATFORMS: linux/amd64,linux/arm,linux/arm64

@@ -1,5 +1,5 @@
 # pinyin-search
-<a href="https://github.com/jeessy2/pinyin-search/releases/latest"><img alt="GitHub release" src="https://img.shields.io/github/release/jeessy2/pinyin-search.svg?logo=github&style=flat-square"></a> <img src=https://goreportcard.com/badge/github.com/jeessy2/pinyin-search /> <img src=https://img.shields.io/docker/image-size/jeessy/pinyin-search /> <img src=https://img.shields.io/docker/pulls/jeessy/pinyin-search />
+<a href="https://github.com/pinyin-search/pinyin-search/releases/latest"><img alt="GitHub release" src="https://img.shields.io/github/release/pinyin-search/pinyin-search.svg?logo=github&style=flat-square"></a> <img src=https://goreportcard.com/badge/github.com/pinyin-search/pinyin-search /> <img src=https://img.shields.io/docker/image-size/pinyinsearch/pinyin-search /> <img src=https://img.shields.io/docker/pulls/pinyinsearch/pinyin-search />
 
 提供一些接口, 支持一段中英文进行分词, 分词后的数据转换为拼音, 并保存到search中, 目前只实现了meilisearch.
 
@@ -9,7 +9,7 @@
 docker run -d \
   --name pinyin-search \
   --restart=always -p 7701:7701 \
-  jeessy/pinyin-search \
+  pinyinsearch/pinyin-search \
   -meiliHost https://meiliHost.com -meiliKey xxxx \
   -auth xxxx
 ```
