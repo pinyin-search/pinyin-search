@@ -102,8 +102,8 @@ func (meili *MeiliSearch) Delete(indexName string, dataId string) (entity.Result
 	return entity.Result{Success: true}, nil
 }
 
-// Suggestion 搜索建议
-func (meili *MeiliSearch) Suggestion(indexName string, keyword string) (entity.Result, error) {
+// Suggest 搜索建议
+func (meili *MeiliSearch) Suggest(indexName string, keyword string) (entity.Result, error) {
 	searchRes, err := meili.Client.Index(indexName).Search(keyword, &meilisearch.SearchRequest{})
 
 	if err != nil {

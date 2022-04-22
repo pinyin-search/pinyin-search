@@ -33,5 +33,5 @@ http://localhost:7701/delete?tenant=projectName&indexName=test&dataId=123456789
 ## 搜索建议接口
 
 ```
-http://localhost:7701/suggestion?tenant=projectName&indexName=test&data=jttq
+http://localhost:7701/suggest?tenant=projectName&indexName=test&data=jttq
 ```
