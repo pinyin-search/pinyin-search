@@ -34,7 +34,8 @@ func main() {
 	}
 
 	http.HandleFunc("/", web.Index)
-	http.HandleFunc("/addUpdate", web.Auth(web.AddUpdate))
+	http.HandleFunc("/update", web.Auth(web.Update))
+	http.HandleFunc("/updateBatch", web.Auth(web.UpdateBatch))
 	http.HandleFunc("/delete", web.Auth(web.Delete))
 	http.HandleFunc("/suggest", web.Auth(web.Suggest))
 

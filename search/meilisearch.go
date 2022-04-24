@@ -26,7 +26,7 @@ func (meili *MeiliSearch) Init() {
 }
 
 // add 添加索引
-func (meili *MeiliSearch) add(indexName string, doc []map[string]interface{}) (entity.Result, error) {
+func (meili *MeiliSearch) Add(indexName string, docs []entity.Doc) (entity.Result, error) {
 	// An index is where the documents are stored.
 	index := meili.Client.Index(indexName)
 
@@ -48,7 +48,7 @@ func (meili *MeiliSearch) add(indexName string, doc []map[string]interface{}) (e
 
 	}
 
-	task, err := index.AddDocuments(doc)
+	task, err := index.AddDocuments(docs)
 	if err != nil {
 		log.Printf("添加Index失败。indexName: %s, err: %s\n", indexName, err)
 		return entity.Result{Success: false, Msg: err.Error()}, err
@@ -61,16 +61,16 @@ func (meili *MeiliSearch) add(indexName string, doc []map[string]interface{}) (e
 	}
 	log.Printf("添加Index成功。indexName: %s\n", indexName)
 
-	return entity.Result{Success: true, Data: doc, Msg: string(task.Status)}, nil
+	return entity.Result{Success: true, Data: docs, Msg: string(task.Status)}, nil
 }
 
 // Update 更新索引
-func (meili *MeiliSearch) AddUpdate(indexName string, dataId string, doc []map[string]interface{}) (entity.Result, error) {
+func (meili *MeiliSearch) Update(indexName string, dataId string, docs []entity.Doc) (entity.Result, error) {
 
 	// 通过guid删除旧数据
 	meili.Delete(indexName, dataId)
 
-	return meili.add(indexName, doc)
+	return meili.Add(indexName, docs)
 }
 
 // Delete 删除索引

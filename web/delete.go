@@ -3,6 +3,7 @@ package web
 import (
 	"encoding/json"
 	"net/http"
+	"pinyin-search/entity"
 	"pinyin-search/search"
 )
 
@@ -15,8 +16,8 @@ func Delete(writer http.ResponseWriter, request *http.Request) {
 
 	if dataId == "" || indexName == "" {
 		writer.WriteHeader(400)
-		j, _ := json.Marshal(errDataJson)
-		writer.Write(j)
+		returnJson, _ := json.Marshal(entity.Result{Success: false, Msg: "请求参数不完整"})
+		writer.Write(returnJson)
 		return
 	}
 

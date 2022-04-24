@@ -1,58 +1,47 @@
-package web
+package entity
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
-	"net/http"
-	"pinyin-search/entity"
-	"pinyin-search/search"
 	"regexp"
 	"strings"
 	"unicode/utf8"
 
 	"github.com/go-ego/gse"
-
 	"github.com/mozillazg/go-pinyin"
 )
 
 var pyArgs = pinyin.NewArgs()
 var pyArgsFirst = pinyin.NewArgs()
 var seg gse.Segmenter
-var errDataJson entity.Result = entity.Result{Success: false, Msg: "异常的数据, 将不会添加索引"}
 
 var regWord, _ = regexp.Compile("[a-zA-Z]")
 
 func init() {
 	pyArgsFirst.Style = pinyin.FirstLetter
 	// 加载默认字典
-	seg.LoadDict()
+	seg.LoadDictEmbed()
 }
 
-// AddUpdate 新增或更新索引
-func AddUpdate(writer http.ResponseWriter, request *http.Request) {
-	request.ParseForm()
-	tenant := request.Form.Get("tenant")
-	indexName := request.Form.Get("indexName")
-	dataId := request.Form.Get("dataId")
-	data := request.Form.Get("data")
+func (req *PinYinRequest) GetDocs() (docs []Doc, err error) {
 
-	if data == "" || dataId == "" || indexName == "" {
-		writer.WriteHeader(400)
-		j, _ := json.Marshal(errDataJson)
-		writer.Write(j)
-		return
+	// 校验
+	if req.IndexName == "" || req.DataId == "" || req.Data == "" {
+		r, _ := json.Marshal(req)
+		return docs, errors.New("异常的数据: " + string(r))
 	}
 
-	words := seg.Cut(data, true)
+	words := seg.Cut(req.Data, true)
 	indexes := make(map[string]string)
 
 	// 全拼字母
-	indexes[strings.Join(pinyin.LazyPinyin(data, pyArgs), "")] = data
+	indexes[strings.Join(pinyin.LazyPinyin(req.Data, pyArgs), "")] = req.Data
 
 	// 全拼第一个字母
-	firstLetterAll := strings.Join(pinyin.LazyPinyin(data, pyArgsFirst), "")
+	firstLetterAll := strings.Join(pinyin.LazyPinyin(req.Data, pyArgsFirst), "")
 	if firstLetterAll != "" {
-		indexes[firstLetterAll] = data
+		indexes[firstLetterAll] = req.Data
 	}
 
 	// 分词
@@ -80,7 +69,7 @@ func AddUpdate(writer http.ResponseWriter, request *http.Request) {
 
 	// 字母单词
 	wordsEnglish := ""
-	for _, word := range strings.Fields(data) {
+	for _, word := range strings.Fields(req.Data) {
 		if word != "" {
 			wordsEnglish = wordsEnglish + " " + strings.Join(regWord.FindAllString(word, -1), "")
 		}
@@ -90,19 +79,12 @@ func AddUpdate(writer http.ResponseWriter, request *http.Request) {
 		indexes[wordsEnglish] = wordsEnglish
 	}
 
-	var doc []map[string]interface{}
 	idx := 0
 	for k, v := range indexes {
 		// id 为 dataId_index
-		doc = append(doc, map[string]interface{}{"id": fmt.Sprintf("%s_%d", dataId, idx), "key": k, "value": v})
+		docs = append(docs, Doc{Id: fmt.Sprintf("%s_%d", req.DataId, idx), Key: k, Value: v})
 		idx = idx + 1
 	}
 
-	result, err := search.MySearch.AddUpdate(tenant+"_"+indexName, dataId, doc)
-	if err != nil {
-		writer.WriteHeader(400)
-	}
-	returnJson, _ := json.Marshal(result)
-	writer.Write(returnJson)
-
+	return docs, nil
 }
