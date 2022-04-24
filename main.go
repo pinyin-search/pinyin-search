@@ -33,6 +33,7 @@ func main() {
 		search.MySearch.Init()
 	}
 
+	http.HandleFunc("/", web.Index)
 	http.HandleFunc("/addUpdate", web.Auth(web.AddUpdate))
 	http.HandleFunc("/delete", web.Auth(web.Delete))
 	http.HandleFunc("/suggest", web.Auth(web.Suggest))
