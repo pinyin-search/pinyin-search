@@ -21,7 +21,7 @@ func Delete(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	result, err := search.MySearch.Delete(tenant+"_"+indexName, dataId)
+	result, err := search.MySearch.Delete(tenant+"_"+indexName, []string{dataId})
 	if err != nil {
 		writer.WriteHeader(400)
 	}

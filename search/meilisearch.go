@@ -68,38 +68,40 @@ func (meili *MeiliSearch) Add(indexName string, docs []entity.Doc) (entity.Resul
 func (meili *MeiliSearch) Update(indexName string, dataId string, docs []entity.Doc) (entity.Result, error) {
 
 	// 通过guid删除旧数据
-	meili.Delete(indexName, dataId)
+	meili.Delete(indexName, []string{dataId})
 
 	return meili.Add(indexName, docs)
 }
 
 // Delete 删除索引
-func (meili *MeiliSearch) Delete(indexName string, dataId string) (entity.Result, error) {
+func (meili *MeiliSearch) Delete(indexName string, dataIds []string) (entity.Result, error) {
+
+	_, err := meili.Client.GetIndex(indexName)
+	if err != nil {
+		return entity.Result{Success: false, Msg: fmt.Sprintf("删除索引失败! Err: %s", err.Error())}, err
+	}
 
 	index := meili.Client.Index(indexName)
 
+	var deleteAllIds []string
+
 	// 通过dataId查找旧数据
-	resp, err := index.Search(dataId, &meilisearch.SearchRequest{
-		AttributesToRetrieve: []string{"id"},
-		Limit:                1,
-	})
-
-	// 删除旧的索引
-	if err == nil {
-		deleteIds := make([]string, resp.NbHits)
-		var i int64
-		for i = 0; i < resp.NbHits; i++ {
-			deleteIds[i] = fmt.Sprintf("%s_%d", dataId, i)
+	for _, dataId := range dataIds {
+		resp, err := index.Search(dataId, &meilisearch.SearchRequest{
+			AttributesToRetrieve: []string{"id"},
+			Limit:                1,
+		})
+		if err == nil {
+			deleteIds := make([]string, resp.NbHits)
+			var i int64
+			for i = 0; i < resp.NbHits; i++ {
+				deleteIds[i] = fmt.Sprintf("%s_%d", dataId, i)
+			}
+			deleteAllIds = append(deleteAllIds, deleteIds...)
 		}
-		index.DeleteDocuments(deleteIds)
-
-		log.Printf("删除Index成功。indexName: %s, dataId: %s, 索引条数: %d\n", indexName, dataId, len(deleteIds))
-		return entity.Result{Success: true, Msg: fmt.Sprintf("删除 %d 条索引", len(deleteIds))}, nil
-	} else if err, ok := err.(*meilisearch.Error); ok && err.StatusCode != 404 {
-		log.Printf("删除索引失败。indexName: %s, Err: %s\n", indexName, err)
-		return entity.Result{Success: false, Msg: err.Error(), Data: nil}, err
 	}
-	return entity.Result{Success: true}, nil
+	index.DeleteDocuments(deleteAllIds)
+	return entity.Result{Success: true, Msg: fmt.Sprintf("删除 %d 条索引", len(deleteAllIds))}, nil
 }
 
 // DeleteAll 删除indexName下的全部索引

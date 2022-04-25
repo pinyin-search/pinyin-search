@@ -20,16 +20,21 @@ func UpdateBatch(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	batchMap := make(map[string][]entity.Doc)
+	dataIdMap := make(map[string][]string)
 	for _, pyRequest := range *batch {
 		docs, err := pyRequest.GetDocs()
 		if err == nil {
 			name := pyRequest.Tenant + "_" + pyRequest.IndexName
 			batchMap[name] = append(batchMap[name], docs...)
-			// delete first
-			search.MySearch.Delete(name, pyRequest.DataId)
+			dataIdMap[name] = append(dataIdMap[name], pyRequest.DataId)
 		} else {
 			log.Println("该条数据将不会加入索引! " + err.Error())
 		}
+	}
+
+	// delete index
+	for k,v := range dataIdMap {
+		search.MySearch.Delete(k, v)
 	}
 
 	successNum := 0
