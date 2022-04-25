@@ -17,5 +17,5 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/re
     && apk add --no-cache tzdata
 ENV TZ=Asia/Shanghai
 COPY --from=builder /app/pinyin-search /app/pinyin-search
-EXPOSE 9876
+EXPOSE 7701
 ENTRYPOINT ["/app/pinyin-search"]
