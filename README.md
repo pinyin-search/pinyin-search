@@ -24,13 +24,18 @@ http接口中的header中需要传`Authorization`, 参数为安装时指定的au
 http://localhost:7701/update?tenant=projectName&indexName=test&dataId=123456789&data=今天天气真好啊
 ```
 
-
 ## 批量更新接口
-
 ```
 http://localhost:7701/updateBatch
 
-[{"tenant": "test", "indexName": "test", "dataId":  "1", "data":  "hello"},{"tenant": "test", "indexName": "test", "dataId":  "2", "data":  "nihao"}]
+Content-Type: application/json
+```
+
+``` json
+[
+  {"tenant": "projectName", "indexName": "test", "dataId":  "1", "data":  "我是帅哥"},
+  {"tenant": "projectName", "indexName": "test", "dataId":  "2", "data":  "我是美女"}
+]
 ```
 
 ## 删除接口 (通过dataId可删除索引)
