@@ -44,6 +44,12 @@ Content-Type: application/json
 http://localhost:7701/delete?tenant=projectName&indexName=test&dataId=123456789
 ```
 
+## 删除所有
+
+```
+http://localhost:7701/deleteAll?tenant=projectName&indexName=test
+```
+
 ## 搜索建议接口
 
 ```

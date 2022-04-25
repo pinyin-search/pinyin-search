@@ -102,6 +102,22 @@ func (meili *MeiliSearch) Delete(indexName string, dataId string) (entity.Result
 	return entity.Result{Success: true}, nil
 }
 
+// DeleteAll 删除indexName下的全部索引
+func (meili *MeiliSearch) DeleteAll(indexName string) (entity.Result, error) {
+
+	task, err := meili.Client.Index(indexName).DeleteAllDocuments()
+
+	// 删除旧的索引
+	if err == nil {
+		log.Printf("删除 %s 的所有Index成功\n", indexName)
+		return entity.Result{Success: true, Msg: string(task.Status)}, nil
+	} else if err, ok := err.(*meilisearch.Error); ok && err.StatusCode != 404 {
+		log.Printf("删除 %s 的所有Index失败, Err: %s\n", indexName, err)
+		return entity.Result{Success: false, Msg: err.Error(), Data: nil}, err
+	}
+	return entity.Result{Success: true}, nil
+}
+
 // Suggest 搜索建议
 func (meili *MeiliSearch) Suggest(indexName string, keyword string) (entity.Result, error) {
 	searchRes, err := meili.Client.Index(indexName).Search(keyword, &meilisearch.SearchRequest{})
