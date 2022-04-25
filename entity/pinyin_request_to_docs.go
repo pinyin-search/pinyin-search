@@ -36,7 +36,10 @@ func (req *PinYinRequest) GetDocs() (docs []Doc, err error) {
 	indexes := make(map[string]string)
 
 	// 全拼字母
-	indexes[strings.Join(pinyin.LazyPinyin(req.Data, pyArgs), "")] = req.Data
+	quanpin := pinyin.LazyPinyin(req.Data, pyArgs)
+	if len(quanpin) > 0 {
+		indexes[strings.Join(quanpin, "")] = req.Data
+	}
 
 	// 全拼第一个字母
 	firstLetterAll := strings.Join(pinyin.LazyPinyin(req.Data, pyArgsFirst), "")
