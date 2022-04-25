@@ -2,6 +2,7 @@ package web
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"pinyin-search/entity"
 	"pinyin-search/search"
@@ -26,6 +27,8 @@ func UpdateBatch(writer http.ResponseWriter, request *http.Request) {
 			batchMap[name] = append(batchMap[name], docs...)
 			// delete first
 			search.MySearch.Delete(name, pyRequest.DataId)
+		} else {
+			log.Println("该条数据将不会加入索引! " + err.Error())
 		}
 	}
 
