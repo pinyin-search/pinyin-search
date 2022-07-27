@@ -48,20 +48,20 @@ func (meili *MeiliSearch) Add(indexName string, docs []entity.Doc) (entity.Resul
 
 	}
 
-	task, err := index.AddDocuments(docs)
+	taskDoc, err := index.AddDocuments(docs)
 	if err != nil {
 		log.Printf("添加Index失败。indexName: %s, err: %s\n", indexName, err)
 		return entity.Result{Success: false, Msg: err.Error()}, err
 	}
 
-	task, err = meili.Client.GetTask(task.UID)
+	taskIdx, err := meili.Client.GetTask(taskDoc.TaskUID)
 	if err != nil {
 		log.Printf("添加Index失败。indexName: %s, err: %s\n", indexName, err)
 		return entity.Result{Success: false, Msg: err.Error()}, err
 	}
 	log.Printf("添加Index成功。indexName: %s\n", indexName)
 
-	return entity.Result{Success: true, Data: docs, Msg: string(task.Status)}, nil
+	return entity.Result{Success: true, Data: docs, Msg: string(taskIdx.Status)}, nil
 }
 
 // Update 更新索引
@@ -92,9 +92,9 @@ func (meili *MeiliSearch) Delete(indexName string, dataIds []string) (entity.Res
 			Limit:                1,
 		})
 		if err == nil {
-			deleteIds := make([]string, resp.NbHits)
+			deleteIds := make([]string, resp.EstimatedTotalHits)
 			var i int64
-			for i = 0; i < resp.NbHits; i++ {
+			for i = 0; i < resp.EstimatedTotalHits; i++ {
 				deleteIds[i] = fmt.Sprintf("%s_%d", dataId, i)
 			}
 			deleteAllIds = append(deleteAllIds, deleteIds...)
