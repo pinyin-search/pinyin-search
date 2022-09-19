@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"pinyin-search/entity"
+	"strings"
 	"sync"
 
 	"github.com/meilisearch/meilisearch-go"
@@ -122,6 +123,10 @@ func (meili *MeiliSearch) DeleteAll(indexName string) (entity.Result, error) {
 
 // Suggest 搜索建议
 func (meili *MeiliSearch) Suggest(indexName string, keyword string) (entity.Result, error) {
+	if strings.TrimSpace(keyword) == "" {
+		return entity.Result{Success: true, Data: make([]string, 0)}, nil
+	}
+
 	searchRes, err := meili.Client.Index(indexName).Search(keyword, &meilisearch.SearchRequest{})
 
 	if err != nil {
