@@ -47,6 +47,11 @@ func (meili *MeiliSearch) Add(indexName string, docs []entity.Doc) (entity.Resul
 		// 结果去重
 		index.UpdateDistinctAttribute("value")
 
+		// 设置只能key能搜索
+		sa := make([]string, 2)
+		sa = append(sa, "key")
+		sa = append(sa, "value")
+		index.UpdateSearchableAttributes(&sa)
 	}
 
 	taskDoc, err := index.AddDocuments(docs)
