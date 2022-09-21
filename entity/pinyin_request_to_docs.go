@@ -85,6 +85,9 @@ func (req *PinYinRequest) GetDocs() (docs []Doc, err error) {
 		indexes[wordsEnglish] = wordsEnglish
 	}
 
+	// 原始数据
+	indexes[req.Data] = req.Data
+
 	idx := 0
 	for k, v := range indexes {
 		// id 为 dataId_index
