@@ -54,6 +54,9 @@ func (req *PinYinRequest) GetDocs() (docs []Doc, err error) {
 			firstLetter := strings.Join(pinyin.LazyPinyin(word, pyArgsFirst), "")
 			if firstLetter != "" {
 				indexes[firstLetter] = word
+			} else {
+				// 英文单词 或 数字
+				indexes[word] = word
 			}
 
 			// 拼音
