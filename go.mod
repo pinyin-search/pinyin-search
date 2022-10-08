@@ -1,6 +1,6 @@
 module pinyin-search
 
-go 1.17
+go 1.19
 
 require (
 	github.com/go-ego/gse v0.70.2
